@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Action -->
+    <record id="action_bi_stock_moves" model="ir.actions.act_window">
+        <field name="name">Smart Inventory BI Dashboard</field>
+        <field name="res_model">bi.stock.moves</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p>BI dashboard from PostgreSQL view <b>bi_stock_moves</b>.</p>
+        </field>
+    </record>
+
+    <!-- Menu (tạo menu riêng cho chắc chắn, không phụ thuộc menu Inventory có/không) -->
+    <menuitem id="menu_smart_bi_root" name="Smart BI" sequence="10"/>
+    <menuitem id="menu_smart_bi_dashboard" name="Inventory BI Dashboard"
+              parent="menu_smart_bi_root" action="action_bi_stock_moves" sequence="10"/>
+
+    <!-- Tree -->
+    <record id="view_bi_stock_moves_tree" model="ir.ui.view">
+        <field name="name">bi.stock.moves.tree</field>
+        <field name="model">bi.stock.moves</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="move_date"/>
+                <field name="operation_code"/>
+                <field name="partner_name"/>
+                <field name="product_name"/>
+                <field name="qty_done"/>
+                <field name="qty_signed"/>
+                <field name="origin"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Pivot -->
+    <record id="view_bi_stock_moves_pivot" model="ir.ui.view">
+        <field name="name">bi.stock.moves.pivot</field>
+        <field name="model">bi.stock.moves</field>
+        <field name="arch" type="xml">
+            <pivot string="Inventory BI Pivot">
+                <field name="qty_done" type="measure"/>
+                <field name="qty_signed" type="measure"/>
+                <field name="operation_code" type="row"/>
+                <field name="partner_id" type="row"/>
+                <field name="product_id" type="row"/>
+                <field name="move_date" interval="day" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph -->
+    <record id="view_bi_stock_moves_graph" model="ir.ui.view">
+        <field name="name">bi.stock.moves.graph</field>
+        <field name="model">bi.stock.moves</field>
+        <field name="arch" type="xml">
+            <graph string="Inventory BI Graph" type="line">
+                <field name="move_date" interval="day"/>
+                <field name="qty_signed" type="measure"/>
+                <field name="operation_code" type="row"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_bi_stock_moves_search" model="ir.ui.view">
+        <field name="name">bi.stock.moves.search</field>
+        <field name="model">bi.stock.moves</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <filter string="Incoming" name="incoming" domain="[('operation_code','=','incoming')]"/>
+                <filter string="Outgoing" name="outgoing" domain="[('operation_code','=','outgoing')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Operation" context="{'group_by':'operation_code'}"/>
+                    <filter string="Partner" context="{'group_by':'partner_id'}"/>
+                    <filter string="Product" context="{'group_by':'product_id'}"/>
+                    <filter string="Date" context="{'group_by':'move_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

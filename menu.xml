@@ -1,0 +1,10 @@
+<odoo>
+    <menuitem id="menu_smart_inventory_bi_root"
+              name="Smart Inventory BI"
+              sequence="15"/>
+
+    <menuitem id="menu_smart_inventory_bi_report"
+              name="BI Report"
+              parent="menu_smart_inventory_bi_root"
+              action="action_smart_inventory_bi_report"/>
+</odoo>
